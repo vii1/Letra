@@ -1,0 +1,100 @@
+;******************************************************************************
+;       Programa que imprime la tabla de caracteres y la de colores
+;******************************************************************************
+
+;Zona de definici줻 de las variables
+
+datos
+  hex[]="0123456789ABCDEF" ;D죊itos del sistema hexadecimal
+  a b                      ;Coordenadas para pintar las tablas
+fin
+
+;******************************************************************************
+;       Aqui empieza el programa principal
+;******************************************************************************
+
+  hacer.tabla_ascii     ;Llama a las rutinas que pintan las tablas ...
+  hacer.tabla_colores
+
+  color(15) mover_cursor(6,22)
+  escribir("Pulse una tecla para finalizar la ejecuci줻 de este programa ...")
+
+  hacer.pausa           ;Y espera una tecla
+
+volver ;Fin del programa principal
+
+
+;******************************************************************************
+;       Rutina para pintar la tabla de c줰igos ASCII
+;******************************************************************************
+
+.tabla_ascii
+
+  color(15) mover_cursor(4,0)
+  escribir(" Tabla de c줰igos ASCII")
+  mover_cursor(0,1)
+  escribir("컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�")
+  color(9) mover_cursor(2,2)
+  escribir("0 1 2 3 4 5 6 7 8 9 A B C D E F")
+
+  b=0
+  mientras b<16
+    a=0
+    color(9) mover_cursor(0,b+3)
+    poner_caracter(hex[b])
+    color(7)
+    mientras a<16
+      mover_cursor(a*2+2,b+3)
+      poner_caracter(a+b*16)
+      a=a+1
+    fin
+    b=b+1
+  fin
+
+volver
+
+;******************************************************************************
+;       Rutina para pintar la tabla de colores
+;******************************************************************************
+
+.tabla_colores
+
+  color(15) mover_cursor(44,0)
+  escribir(" Tabla de colores")
+  mover_cursor(40,1)
+  escribir("컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�")
+  color(9) mover_cursor(42,2)
+  escribir("0 1 2 3 4 5 6 7 8 9 A B C D E F")
+
+  b=0
+  mientras b<16
+    a=0
+    color(9) mover_cursor(40,b+3)
+    poner_caracter(hex[b])
+    mientras a<16
+      color(a+b*16)
+      mover_cursor(a*2+42,b+3)
+      poner_caracter("#")
+      a=a+1
+    fin
+    b=b+1
+  fin
+
+volver
+
+;******************************************************************************
+;       Rutina de espera hasta que se pulse una tecla
+;       Devuelve el codigo de la tecla pulsada en <tecla>
+;******************************************************************************
+
+.pausa
+
+datos
+  tecla
+fin
+
+  repetir
+    leer_tecla(tecla)
+  hasta tecla<>0
+
+volver

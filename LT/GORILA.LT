@@ -1,0 +1,335 @@
+;Programa basado en la resolucion de juegos
+;de estrategia segun teoria molecular cuantica
+Datos
+  i j k c a level
+  x1 y1 x2 y2 posant salto inc
+  final choque vidas
+Fin
+.Presentacion
+i=0
+j=0
+c=9
+Repetir
+  Color(c)
+  Mover_cursor(i,j)
+  Escribir("Laal Software S.L.")
+  Mover_cursor(i,24-j)
+  Escribir("Laal Software S.L.")
+  i=i+20
+  Si i=80
+    i=0
+    j=j+1
+    c=c+1
+    Si c=16
+      c=9
+    Fin
+    Esperar(5)
+  Fin
+  Si j>9 y j<15
+    Si i<>0
+      i=60
+    Fin
+  Fin
+Hasta j=25
+c=8
+Repetir
+  c=c+1
+  Esperar(10)
+  Si c=16
+    c=9
+  Fin
+  Mover_cursor(19,10)
+  Color(c%7+9)
+  Escribir("лллл лллл лллл лллл лллл л  л ллллл лллл")
+  Mover_cursor(19,11)
+  Color((c+1)%7+9)
+  Escribir("л  л л  л л    л    л    лл л   л   л  л")
+  Mover_cursor(19,12)
+  Color((c+2)%7+9)
+  Escribir("лллл ллл  лл   лллл лл   л лл   л   лллл")
+  Mover_cursor(19,13)
+  Color((c+1)%7+9)
+  Escribir("л    л  л л       л л    л  л   л   л  л")
+  Mover_cursor(19,14)
+  Color(c%7+9)
+  Escribir("л    л  л лллл лллл лллл л  л   л   л  л")
+  Leer_tecla(a)
+Hasta A<>0
+.Menu
+Color(9)
+Borrar_pantalla()
+Mover_cursor(33,8)
+Escribir("GORILON CRUSOE")
+Mover_cursor(28,10)
+Escribir("AN INTERACTIVE ADVENTURE")
+Mover_cursor(36,14)
+Escribir("1- JUGAR")
+Mover_cursor(36,16)
+Escribir("0- SALIR")
+Repetir
+  Leer_tecla(a)
+Hasta a="1" o a="0"
+Si a="0"
+  Volver
+Fin
+level=1
+vidas=5
+.Bucle_principal
+Hacer .Pinta_pantalla
+i=0 salto=0 inc=0 choque=0
+x1=5 y1=19 x2=5 y2=19 posant=" "
+final=0
+Color(10)
+Mover_cursor(x1,y1)
+Escribir("ъ")
+Mientras i<10
+  barriles[4*i]=21
+  barriles[4*i+1]=4
+  barriles[4*i+2]=1
+  barriles[4*i+3]=" "
+  i=i+1
+Fin
+j=0 k=1
+Repetir
+  i=0
+  Mientras i<k
+    barril=i
+    char=barriles[4*i+3]
+    Hacer .Mover_barriles
+    i=i+1
+  Fin
+  j=j+1
+  Si j=250/level
+    j=0
+    k=k+1
+    Si k>level
+      k=level
+    Fin
+  Fin
+  Esperar(5)
+  Hacer .Detectar_choque
+  Si choque=1
+    Ir .Estas_muerto
+  Fin
+  Leer_tecla(a)
+  Si a="p" o a="P"
+    x2=x1+1
+  Fin
+  Si a="o" o a="O"
+    x2=x1-1
+  Fin
+  Si a="a" o a="A"
+    y2=y1+1
+  Fin
+  Si a="q" o a="Q"
+    y2=y1-1
+  Fin
+  Hacer .Mover_prota
+  Si final=1
+    Ir .Siguiente_nivel
+  Fin
+  Hacer .Detectar_choque
+  Si choque=1
+    Ir .Estas_muerto
+  Fin
+Hasta a="5"
+Color(7)
+Volver
+.Estas_muerto
+vidas=vidas-1
+Color(9)
+Borrar_pantalla()
+Si vidas>0
+  Mover_cursor(30,12)
+  Escribir("HAS PERDIDO UNA VIDA")
+  Esperar(20)
+  Repetir
+    Leer_tecla(a)
+  Hasta a=0
+  Repetir
+    Leer_tecla(a)
+  Hasta a<>0
+  Ir .Bucle_principal
+Fin
+Mover_cursor(34,11)
+Escribir("T'AS MORIDO")
+Esperar(20)
+Ir .Final
+.Siguiente_nivel
+Color(9)
+Borrar_pantalla()
+Si level=10
+  Mover_cursor(31,11)
+  Escribir("LO HAS CONSEGUIDO")
+  Ir .Final
+Fin
+Mover_cursor(31,11)
+Escribir("NIVEL ")
+Poner_caracter(48+level)
+Escribir(" TERMINADO")
+Mover_cursor(25,13)
+Escribir("PULSA UNA TECLA PARA CONTINUAR")
+Esperar(20)
+Repetir
+  Leer_tecla(a)
+Hasta a=0
+Repetir
+  Leer_tecla(a)
+Hasta a<>0
+level=level+1
+Ir .Bucle_principal
+.Pinta_pantalla
+j=0
+Borrar_pantalla()
+Color(16*4+14)
+Mientras j<16
+i=0
+j=j+5
+  Mientras i<10
+    Mover_cursor(i*7+5,j)
+    Escribir("АБВлВБА")
+    i=i+1
+  Fin
+Fin
+Color(10)
+i=71 j=5
+Repetir
+  Repetir
+    Mover_cursor(i,j)
+    Escribir("Ю")
+    j=j+1
+  Hasta j%5=0
+  Si i=8
+    i=71
+    Sino i=8
+  Fin
+Hasta j=20
+Mover_cursor(8,20)
+Escribir("Ю")
+Color(11)
+Mover_cursor(12,0)
+Escribir(" \/  ")
+Mover_cursor(12,1)
+Escribir("  Б   ")
+Mover_cursor(12,2)
+Escribir(" / \  ")
+Mover_cursor(10,3)
+Color(4)
+Escribir("ллллллллллл")
+Mover_cursor(10,4)
+Escribir("БББББББББББ")
+Color(10) Mover_cursor(17,2) Escribir("ooo")
+Mover_cursor(18,1) Escribir("o")
+Color(7) Mover_cursor(14,24)
+Escribir("[O] Izquierda [P] Derecha [Q] Subir/Saltar [A] Bajar")
+Color(12)
+Mover_cursor(38,2)
+Escribir("")
+Color(14)
+Mover_cursor(69,0)
+Escribir(" : ")
+Poner_caracter(vidas+48)
+Volver
+.Mover_prota
+Si x2=38 y y2=2
+  final=1
+  Volver
+Fin
+Si salto>0
+  y2=y1-inc
+  x2=x1
+  salto=salto+inc
+  Si salto=3
+    inc=-1
+  Fin
+Fin
+Si x2=20 y y2=4
+  x2=21
+  Volver
+Fin
+Si (x1<>x2 y x2>=5 y x2<=74 y (y2+1)%5=0)
+  o (y2<>y1 y ((x2=8 y y2<15 y y2>=9)
+  o (x2=71 y ((y2<10 y y2>=4) o (y2>=14 y y2<20)))))
+  Mover_cursor(x1,y1)
+  Poner_caracter(posant)
+  Mover_cursor(x2,y2)
+  Leer_caracter(posant)
+  Escribir("P")
+  x1=x2 y1=y2
+Fin
+Si y2<>y1
+  Si y2<y1 y salto=0
+    salto=1
+    inc=1
+  Fin
+  Si y2>y1 y y2%5=0
+    x2=x1 y2=y1
+    Volver
+  Fin
+  Mover_cursor(x1,y1)
+  Poner_caracter(posant)
+  Mover_cursor(x2,y2)
+  Leer_caracter(posant)
+  Escribir("P")
+  x1=x2 y1=y2
+Fin
+x2=x1 y2=y1
+Volver
+.Detectar_choque
+i=0
+Mientras i<level
+  Si x1=barriles[i*4] y y1=barriles[i*4+1]
+    choque=0
+  Fin
+  i=i+1
+Fin
+Volver
+.Mover_barriles
+Datos
+  posx posy barril barriles[40] char    ;barriles=10barriles*4entradas cada uno
+Fin                                     ;entradas=posx,posy,mov(1,0,-1),char
+Color(10)
+posx=barriles[barril*4]
+posy=barriles[barril*4+1]
+Mover_cursor(posx,posy)
+Poner_caracter(char)
+Si posx=71
+  barriles[barril*4+2]=0
+  Si posy<9
+    posy=posy+1
+  Sino Si posy<19 y posy>12
+         posy=posy+1
+       Sino barriles[barril*4+2]=-1
+       Fin
+  Fin
+Sino Si posx=8
+       barriles[barril*4+2]=0
+       Si posy<14
+         posy=posy+1
+       Sino Si posy=19
+              posy=4
+              posx=21
+            Fin
+            barriles[barril*4+2]=1
+       Fin
+     Fin
+Fin
+posx=posx+barriles[barril*4+2]
+Mover_cursor(posx,posy)
+Leer_caracter(char)
+barriles[barril*4+3]=char
+Escribir("o")
+barriles[barril*4]=posx
+barriles[barril*4+1]=posy
+Volver
+.Final
+Color(9)
+Repetir
+  Leer_tecla(a)
+Hasta a=0
+Mover_cursor(25,13)
+Escribir("PULSA UNA TECLA PARA CONTINUAR")
+Repetir
+  Leer_tecla(a)
+Hasta a<>0
+Ir .Menu

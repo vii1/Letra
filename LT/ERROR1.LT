@@ -1,0 +1,100 @@
+;******************************************************************************
+;   Este programa es una colecci¢n de los errores de compilaci¢n mas comunes.
+;******************************************************************************
+
+;Forma de uso:
+;
+;       A continuaci¢n vienen una serie de lineas de comentarios por parejas.
+;       Para Obtener el error indicado en la primera se deber  quitar el punto
+;       y coma [;] inicial de la siguiente y pulsar F5 (Compilar)
+;
+;       Para despu‚s probar con otro error, antes volver a a¤adir el punto y
+;       coma que hemos quitado anteriormente.
+
+;******************************************************************************
+
+;Caracter no esperado
+;_etiqueta_mala
+
+;Literal sin cerrar
+;"HOLA ESTO ES UNA PRUEBA
+
+;Se esperaba una sentencia
+;=0
+
+;Esta construccion no ha sido iniciada
+;sino a=0 fin
+
+;Se esperaba identificador de dato o FIN
+;datos a b .etiqueta_en_mal_lugar
+
+;Se esperaba un simbolo de asignaci¢n
+;a 0
+
+;Etiqueta inexistente
+;ir .pausa
+
+;Esperando un fin de SI
+;si a=0 a=32
+
+;Esperando un fin de MIENTRAS
+;mientras a
+
+;Esperando un HASTA
+;repetir a=32 b=58
+
+;Se esperaba una etiqueta
+;ir .pausa
+
+;Se esperaba un ]
+;datos t[1=3
+
+;Expresion incorrecta, se esperaba un valor
+;a=b* /c
+
+;Se esperaba )
+;a=(b c
+
+;Se esperaba un entero
+;datos t[a]
+
+;Se esperaba una constante
+;datos a=b
+
+;Identificador declarado mas de una vez
+;datos a[0] a
+
+;Un dato puede contener un solo car cter
+;datos t="faaa"
+
+;Demasiados valores para la tabla
+;datos t[0]=0
+
+;N£mero fuera de rango
+;a=32768
+
+;No se indic¢ el tama¤o de la tabla
+;datos t[] fin
+
+;Dato usado a veces como tabla
+;a=a[1]
+
+;Se esperaba un literal de un car cter
+;a="gga"
+
+;Se esperaba (
+;Borrar_pantalla a=0
+
+;Se esperaba un literal
+;Escribir(0)
+
+;Se esperaba un identificador de dato
+;Aleatorio(9)
+
+;Se esperaba una coma
+;Mover_cursor(9)
+
+;Dato no declarado
+;a=0
+
+;******************************************************************************

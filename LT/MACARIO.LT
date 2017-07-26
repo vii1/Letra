@@ -1,0 +1,87 @@
+;******************************************************************************
+;       Macario, el enano saltar¡n
+;******************************************************************************
+
+Datos
+
+  TSuelo1[80]
+  TSuelo2[80]
+
+  ISuelo=0
+
+  Tierra=Cierto ;Es tierra o es un agujero
+  TLong=40      ;Longitud del cacho actual, sea tierra o sea agujero
+
+  Nivel=8 ;Nivel de dificultad (0..9)
+
+  a b c
+
+  tecla
+
+Fin
+
+.Inicio_programa
+
+        c=0 Repetir
+          c=c+1
+          Hacer.Linea_Nueva
+        Hasta c=80
+        Hacer.Pinta
+
+        Repetir
+          Hacer.Linea_Nueva
+          Hacer.Pinta
+          leer_tecla(tecla)
+          Si tecla="2" y Nivel<9 Nivel=Nivel+1 fin
+          Si tecla="1" y Nivel>0 Nivel=Nivel-1 fin
+          Esperar(6-Nivel/3)
+        Hasta tecla="Q"
+        Hacer.Pausa
+ Volver
+
+;******************************************************************************
+;       Linea Nueva, a¤ade una linea nueva (ISuelo+1)%80
+;******************************************************************************
+
+.Linea_Nueva
+
+        Aleatorio(a)
+        Si TLong=0 Tierra=Tierra+1
+          Si Tierra TLong=a%(46-Nivel*5)+2
+          Sino TLong=a%8+2
+          Fin
+        Fin
+
+        Si Tierra
+          TSuelo1[ISuelo]=(Nivel+1)%7+1+8*(a%2)
+          TSuelo2[ISuelo]="°"+a%3
+        Sino
+          TSuelo1[ISuelo]=" "
+          TSuelo2[ISuelo]=" "
+        Fin
+        TLong=TLong-1
+        ISuelo=(ISuelo+1)%80
+ Volver
+
+;******************************************************************************
+;       Pinta la pantalla actual
+;******************************************************************************
+
+.Pinta
+
+        Mover_cursor(0,23)
+        a=0 Mientras a<80
+          Si TSuelo1[(ISuelo+a)%80]<>" "
+            Color(TSuelo1[(ISuelo+a)%80])
+            Escribir("")
+          Sino Escribir(" ") Fin
+          a=a+1
+        Fin
+        Color((Nivel+3)%7+9)
+        a=0 Mientras a<80
+          Poner_Caracter(TSuelo2[(ISuelo+a)%80])
+          a=a+1
+        Fin
+ Volver
+
+.Pausa leer_tecla(tecla) repetir leer_tecla(tecla) hasta tecla<>0 volver

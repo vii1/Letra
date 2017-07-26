@@ -1,0 +1,1 @@
+bcc -mt -lt startup.cpp

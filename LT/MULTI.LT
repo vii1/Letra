@@ -1,0 +1,34 @@
+datos c xx yy aux fin
+.comienzo
+c=0 color(1)
+repetir c=c+1 aleatorio(xx) xx=xx%40 aleatorio(yy) yy=yy%25
+mover_cursor(xx*2,yy) escribir("€€") hasta c=500
+color(13) mover_cursor(18,19) escribir("®Que tabla de multiplicar quieres practicar?")
+mover_cursor(18,21) escribir("Pulsa el n£mero de la tabla de multiplicar+intro")
+mover_cursor(16,22) escribir("o 0+intro solamente y aparecer† una tabla cualquiera")
+mover_cursor(1,1)
+escribir("Pulse <ESC> para salir al msdos")
+x1=0 y1=25 hacer.leer_entero borrar_pantalla()
+si n>=1 y n<=10 hacer.escribir_tabla sino si n=0 aleatorio(n) n=n%10+1
+hacer.escribir_tabla fin fin ir.comienzo volver
+.escribir_tabla
+c=0 y1=2 aux=n color(10) repetir x1=20 n=aux hacer.escribir_entero escribir(" * ")
+x1=25 n=c hacer.escribir_entero escribir(" = ")
+c=c+1 y1=y1+2 hasta c=11
+c=0 y1=2 repetir repetir x1=31 hacer.leer_entero si n<>aux*c mover_cursor(31,y1)
+escribir("         ERROR") mover_cursor(31,y1) fin hasta n=aux*c
+escribir("              ") c=c+1 y1=y1+2 hasta c=11
+mover_cursor(10,24) color(11) escribir(" PULSE UNA TECLA PARA CONTINUAR")
+repetir leer_tecla(c) hasta c<>0 borrar_pantalla() volver
+datos t[5] i=0 n s a x1 y1 fin
+.escribir_entero
+mover_cursor(x1,y1) si n<0 escribir("-") n=-n x1=x1+1 fin
+repetir t[i]=n%10+"0" n=n/10 i=i+1 hasta n=0 x1=x1+i+1
+repetir i=i-1 poner_caracter(t[i]) hasta i=0 volver
+.leer_entero
+mover_cursor(x1,y1)
+s=1 i=0 n=0 repetir leer_tecla(a) si a="-" y i=0 y s=1 s=-1 x1=x1+1 poner_caracter(a) fin
+si a=8 si i>0 i=i-1 x1=x1-1 sino si s=-1 s=1 x1=x1-1 fin fin
+mover_cursor(x1,y1) escribir(" ") mover_cursor(x1,y1) fin
+si (a>="0" y a<="9") y i<=4 t[i]=a i=i+1 x1=x1+1 poner_caracter(a) fin hasta a=13
+si i>0 a=1 mientras i>0 i=i-1 n=n+(t[i]-"0")*a a=a*10 fin n=n*s fin volver

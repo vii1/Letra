@@ -1,0 +1,17 @@
+        Esta es una versi¢n no registrada de Pklite, pero plenamente
+        funcional. Seguro que la encontrareis £til.
+
+        Sirve para comprimir ficheros ejecutables, tanto EXE como COM,
+        genera un fichero comprimido que sigue siendo ejecutable, y que
+        se descomprime autom ticamente cada vez que se ejecuta.
+
+        Se puede utilizar para comprimir los ficheros generados por
+        el compilador. Consigue ratios de compresi¢n bastante buenos.
+
+        Por ejemplo, el programa "columms.lt" ocupa 9527 bytes si se
+        compila con el start up en ensamblador (startup.com 483 bytes),
+        para comprimirlo solo se debe hacer:
+
+        pklite columms.com
+
+        y generar  un columms.com de 3600 bytes plenamente funcional.

@@ -1,0 +1,464 @@
+;******************************************************************************
+;       COLUMMS - El juego de marcianos definitivo
+;       (c) 1993 por Daniel Navarro Medrano
+;******************************************************************************
+
+datos ;Zona de definici¢n de datos
+
+  ;Tabla de los niveles de juego, por cada nivel se define:
+  ;     +0      - Dibujo del enemigo de ese nivel
+  ;     +3      - Color de los enemigos
+  ;     +4      - N£mero total de enemigos
+  ;     +5      - Probabilidad de que disparen los enemigos
+  ;     +6      - Dibujo de los disparos enemigos
+  ;     +7      - N£mero m†ximo de disparos enemigos
+  ;     +8      - Probabilidad de que ataquen los enemigos
+  ;     +9      - Pausa entre imagen e imagen
+  ;     +10     - Altura hasta la bajan los enemigos
+  ;     +11     - Color secundario de los enemigos
+  ;     +12     - Color de los disparos enemigos
+
+  Niveles[]="}o{":14: 6: 30000:"O": 1:32767:6:10: 15: 7:
+            "[˛]":10:10: 31500:"˛": 1:25000:6: 6:  9:78:
+            "ƒƒ":15: 6: 31000:".": 2: 5000:5: 8: 27:15:
+            "/Í\": 9: 6: 27000:"*": 4:25000:5:16: 13: 6:
+            "<¯>":12: 9: 29000:"|": 4:25000:5:12: 46: 2:
+            "¿Ÿ": 9: 6: 28000:"≥": 3:23000:4:14: 31:31:
+            "‘±æ":14: 5: 22000:":": 4:32767:4:18:127:15:
+            "":10: 7: 29000:"+": 2:10000:4:10: 47:14:
+            "ËË":27: 4:     0:"#": 8: 5000:3: 1: 31: 3:
+            "()":13: 3: 10000:"o":12:15000:3:17: 30:15:
+            "˛˛":12: 4: 26000:"": 6:    0:3:14: 15:10:
+            "{È}":71: 8: 32000:"8": 1:    0:3:12: 79:11:
+            "^^": 9:10: 29000:"€": 9:20000:3: 8: 31:13:
+            "$$$":29: 5: 28000:"$": 6:20000:2:15: 29:15:
+            "==":15: 6: 25000:"∫": 9:15000:2: 8: 12: 9
+
+  Enemigos[40]          ;Tabla de enemigos (10 cuaternas x,y,inc_x,inc_y)
+
+  Niv_Actual            ;Nivel de juego actual
+  Num_Ene               ;N£mero de enemigos que quedan vivos
+
+  Disparos              ;N£mero de disparos enemigos en pantalla
+  Dis_Ene[48]           ;Disparos de los enemigos (24 pares x,y)
+  iDis_Ene=0            ;Indice de la tabla anterior
+
+  Dis_Mio[48]           ;Disparos del jugador
+  iDis_Mio=0            ;Indice de la tabla anterior
+
+  X_Nave                ;Coordenada x de nuestra nave
+  Dir_Nave              ;Direcci¢n de nuestra nave
+  Muerto                ;L¢gico que indica si la nave sigue viva
+  Vidas                 ;N£mero de vidas que nos quedan
+
+  TabCol[]=             ;Tabla de colores para el titulo del juego
+
+    0:4:12:14:15:15:15:15:15:15:15:15:15:15:15:15:15:15:15:15:
+    15:15:15:15:15:15:15:15:15:14:12:4:0:4:12:14
+
+  iTabCol               ;Indice para la tabla de colores
+
+  tecla                 ;Variable para recoger entradas del teclado
+
+  a b c d               ;Variables de uso genÇrico, contadores simples
+
+fin
+
+;******************************************************************************
+;       Inicio de la parte ejecutable
+;******************************************************************************
+
+        Hacer.Presentacion ;Efecto de presentaci¢n
+
+.Menu   ;Dibuja la pantalla del men£ de opciones ******************************
+
+        c=0
+        Color(1)
+        Repetir c=c+1
+          Aleatorio(a) a=a%40
+          Aleatorio(b) b=b%25
+          Mover_cursor(a+a,b) Escribir("€€")
+        Hasta c=600
+
+        Color(15)
+        Mover_cursor(19,18) Escribir("MENU DE OPCIONES 0 Empezar una partida")
+        Mover_cursor(36,19) Escribir("1 Salir al MsDos")
+        Color(12) Mover_cursor(7,24)
+        Escribir("Z Izquierda X Derecha ESPACIO Disparar Q Terminar partida")
+        Color(15) Mover_cursor(5,23)
+        Escribir("(c) 1995 Daniel Navarro Medrano, COMPILADORES de Solo PROGRAMADORES")
+
+        iTabCol=4 ;Espera que se elija una opci¢n
+        Repetir
+          hacer.Titulo
+          iTabCol=(iTabCol+1)%32
+          Esperar(7)
+          leer_tecla(tecla)
+          Si tecla="1" hacer.cls volver fin ;Regresa al MsDos
+        Hasta tecla="0"
+
+
+;******************************************************************************
+;       Inicio de la partida
+;******************************************************************************
+
+        Vidas=3
+        Niv_Actual=0
+
+.Inicio_Nivel
+
+        ;Empieza un nuevo nivel de juego **************************************
+
+        Hacer.cls2 Hacer.Marcador
+
+        Mover_cursor(36,10) Color(15)
+        Escribir("NIVEL ")
+        Poner_caracter(((Niv_actual+11)/110)%10+"0")
+        Poner_caracter(((Niv_actual+11)/11)%10+"0")
+
+        Mover_cursor(36,12) Color(Niveles[Niv_actual+3])
+        Poner_caracter(Niveles[Niv_actual])
+        Color(Niveles[Niv_Actual+11])
+        Poner_caracter(Niveles[Niv_actual+1])
+        Color(Niveles[Niv_Actual+3])
+        Poner_caracter(Niveles[Niv_actual+2])
+        Color(15) Escribir(" X ")
+        Poner_caracter((Niveles[Niv_actual+4]/10)%10+"0")
+        Poner_caracter(Niveles[Niv_actual+4]%10+"0")
+
+        Mover_cursor(25,16)
+        Escribir("[Pulse una tecla para empezar]")
+
+        Hacer.Pausa Borrar_pantalla() Hacer.Marcador
+
+        Num_Ene=Niveles[Niv_Actual+4]
+        Disparos=0
+
+        c=0 mientras c<Num_Ene*4
+          Aleatorio(a)
+          si a<0 a=-a Enemigos[c+2]=-1 sino Enemigos[c+2]=1 fin
+          Enemigos[c]=a%40+38
+          Enemigos[c+1]=1 Enemigos[c+3]=1
+          c=c+4
+        fin
+
+        X_Nave=0 Dir_Nave=1
+
+        c=0 mientras c<48 Dis_Ene[c]=24 Dis_Mio[c]=0 c=c+1 fin
+
+        Muerto=Falso
+
+        ;Empieza el control de la partida *************************************
+
+        Repetir
+          leer_tecla(tecla)
+          Si tecla="x" o tecla="X" Dir_Nave=1 fin
+          Si tecla="z" o tecla="Z" Dir_Nave=-1 fin
+          Si Dir_Nave=1 y X_Nave<75 X_Nave=X_Nave+1 fin
+          Si Dir_Nave=-1 y X_Nave>0 X_Nave=X_Nave-1 fin
+          Si tecla=" "
+            Dis_Mio[iDis_Mio+1]=23
+            Dis_Mio[iDis_Mio]=X_Nave+1
+            iDis_Mio=(iDis_Mio+2)%48
+          fin
+
+          Si tecla="2" y Niv_Actual<14*13
+            Niv_Actual=Niv_Actual+13 Ir.Inicio_Nivel fin
+          Si tecla="1" y Niv_Actual>0
+            Niv_Actual=Niv_Actual-13 Ir.Inicio_Nivel fin
+
+          Hacer.Pinta_nave
+          Hacer.Control_Enemigos
+          Hacer.Control_Disparos Hacer.Control_Disparos
+          Hacer.Control_Bombas
+
+          Si Muerto
+            Mover_cursor(X_Nave+1,24)
+            Color(78) Escribir("ﬁ")
+            Color(15) Escribir("€")
+            Color(78) Escribir("›")
+          Fin
+
+          Esperar(Niveles[Niv_actual+9])
+        Hasta tecla="q" o tecla="Q" o Num_Ene=0 o Muerto
+
+        Si Muerto
+          Si Vidas>=0 Ir.Inicio_Nivel ;Se perdi¢ una vida
+          Sino Hacer.Cls2
+               Color(15) Mover_cursor(35,12)
+               Escribir("GAME OVER")
+               Hacer.Pausa
+               Borrar_pantalla() Ir.Menu ;GAME OVER
+          Fin
+        Fin
+
+        Si Num_Ene=0
+          Si Niv_Actual<14*13 Niv_Actual=Niv_Actual+13 Ir.Inicio_Nivel ;Nivel+1
+          Sino ;Se lleg¢ al final
+          Fin
+        Fin
+
+        hacer.cls Borrar_pantalla() Ir.Menu ;QUIT - Se abort¢ la partida
+
+;******************************************************************************
+;       Rutina que pinta nuestra nave
+;******************************************************************************
+
+.Pinta_nave
+
+        Mover_cursor(X_Nave,24) ;O Prototipo F-29 visto de frente
+        Color(11) Escribir(" ")
+        Color(15) Escribir("O")
+        Color(11) Escribir(" ")
+ Volver
+
+;******************************************************************************
+;       Rutina de control de los disparos
+;******************************************************************************
+
+.Control_Disparos
+
+        ;Control de nuestros disparos *****************************************
+
+        c=0
+        Mientras c<48
+          si Dis_Mio[c+1]>0
+            Color(12) Mover_cursor(Dis_Mio[c],Dis_Mio[c+1]) Escribir("   ")
+            Dis_Mio[c+1]=Dis_Mio[c+1]-1
+            Si Dis_Mio[c+1]>=1
+              Mover_cursor(Dis_Mio[c],Dis_Mio[c+1]) Escribir("| |")
+              a=0
+              Mientras a<Niveles[Niv_Actual+4]*4
+                Si Enemigos[a]+2>=Dis_Mio[c] y Enemigos[a]-2<=Dis_Mio[c] y
+                   (Enemigos[a+1]=Dis_Mio[c+1] o Enemigos[a+1]+1=Dis_Mio[c+1])
+                   y Enemigos[a+2]<>0
+                  Enemigos[a+2]=0 Enemigos[a+3]=1
+                  Num_Ene=Num_Ene-1
+                  Mover_cursor(Enemigos[a],Enemigos[a+1])
+                  Color(78) Escribir("ﬁ")
+                  Color(15) Escribir("€")
+                  Color(78) Escribir("›")
+                fin
+                a=a+4
+              fin
+            fin
+          fin
+          c=c+2
+        fin
+ Volver
+
+.Control_Bombas
+
+        ;Control de los disparos enemigos *************************************
+
+        c=0
+        Mientras c<48
+          si Dis_Ene[c+1]<24
+            Color(7)
+            Mover_cursor(Dis_Ene[c],Dis_Ene[c+1]) Escribir(" ")
+            Color(Niveles[Niv_Actual+12])
+            Dis_Ene[c+1]=Dis_Ene[c+1]+1
+            Si Dis_Ene[c+1]<24
+              Mover_cursor(Dis_Ene[c],Dis_Ene[c+1])
+              Poner_caracter(Niveles[Niv_Actual+6])
+              Si Dis_Ene[c+1]=23
+                Si Dis_Ene[c]>=X_Nave+1 y Dis_Ene[c]<=X_Nave+3
+                  Vidas=Vidas-1 Muerto=Cierto
+                Fin
+              Fin
+            Sino Disparos=Disparos-1 fin
+          fin
+          c=c+2
+        fin
+
+ Volver
+
+;******************************************************************************
+;       Rutina de control de los enemigos
+;******************************************************************************
+
+.Control_Enemigos
+
+        c=0
+        Mientras c<Niveles[Niv_Actual+4]*4
+          Si Enemigos[c+2]<>0
+            Aleatorio(a)
+            Mover_cursor(Enemigos[c],Enemigos[c+1])
+            Color(7) Escribir("   ")
+            Si Enemigos[c+2]=1 y Enemigos[c]=77 Enemigos[c+2]=-1 fin
+            Si Enemigos[c+2]=-1 y Enemigos[c]=1 Enemigos[c+2]=1 fin
+            Si Enemigos[c+3]=1 y Enemigos[c+1]=Niveles[Niv_Actual+10] y
+               a<Niveles[Niv_Actual+8]
+              Enemigos[c+3]=-1
+            fin
+            Si Enemigos[c+1]=24
+              Enemigos[c+1]=0
+              Si Enemigos[c]+1>=X_Nave y Enemigos[c]-3<=X_Nave
+                Vidas=Vidas-1 Muerto=Cierto
+              Fin
+            Fin
+            Si Enemigos[c+3]=-1 y Enemigos[c+1]=1 Enemigos[c+3]=1 fin
+
+            Enemigos[c]=Enemigos[c]+Enemigos[c+2]
+            Enemigos[c+1]=Enemigos[c+1]+Enemigos[c+3]
+
+            Color(Niveles[Niv_Actual+3])
+            Mover_cursor(Enemigos[c],Enemigos[c+1])
+            Poner_caracter(Niveles[Niv_Actual])
+            Color(Niveles[Niv_Actual+11])
+            Poner_caracter(Niveles[Niv_Actual+1])
+            Color(Niveles[Niv_Actual+3])
+            Poner_caracter(Niveles[Niv_Actual+2])
+
+            si Disparos<Niveles[Niv_Actual+7] y a>Niveles[Niv_Actual+5] y
+               Enemigos[c+1]<=Niveles[Niv_Actual+10]
+              Dis_Ene[iDis_Ene+1]=Enemigos[c+1]+1
+              Dis_Ene[iDis_Ene]=Enemigos[c]+1
+              iDis_Ene=(iDis_Ene+2)%48
+              Disparos=Disparos+1
+            fin
+
+          Sino
+            Si Enemigos[c+3]<>0
+              Color(7)
+              Mover_cursor(Enemigos[c],Enemigos[c+1]) Escribir("   ")
+              Si Enemigos[c+1]<24
+                Enemigos[c+1]=Enemigos[c+1]+1
+                Color(9)
+                Mover_cursor(Enemigos[c],Enemigos[c+1]) Escribir("xXx")
+                Si Enemigos[c+1]=24
+                  Si Enemigos[c]+1>=X_Nave y Enemigos[c]-3<=X_Nave
+                    Vidas=Vidas-1 Muerto=Cierto
+                  Fin
+                Fin
+              Sino Enemigos[c+3]=0 fin
+            Fin
+          Fin
+          c=c+4
+        Fin
+ Volver
+
+;******************************************************************************
+;       Borrados especiales de la pantalla
+;******************************************************************************
+
+.cls
+
+        Color(7)
+        c=0
+        Repetir
+          d=0
+          Repetir
+            Aleatorio(a) a=a%80
+            Aleatorio(b) b=b%25
+            Mover_cursor(a,b) Escribir(" ")
+            d=d+1
+          Hasta d=50
+          leer_tecla(tecla) ;Para que no se llene el buffer
+          Esperar(1)
+          c=c+1
+        Hasta c=120
+ Volver
+
+.cls2
+
+        Color(9)
+        c=0
+        Repetir
+          Mover_cursor(0,c)
+          Escribir("                                                                                ")
+          Escribir("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
+          Esperar(2)
+          leer_tecla(tecla)
+          c=c+1
+        Hasta c=25
+ Volver
+
+;******************************************************************************
+;       Efecto inicial de presentaci¢n
+;******************************************************************************
+
+.Presentacion
+
+        d=0 Repetir
+          leer_tecla(tecla) si tecla<>0 volver fin
+          Esperar(10)
+          d=d+1
+        Hasta d=20
+        c=7 Repetir c=c+1
+          Mover_cursor(16,12)
+          Color(c)
+          Escribir("COMPILADORES de Solo PROGRAMADORES & Co. PRESENTA")
+          Esperar(6)
+        Hasta c=15
+        Esperar(200)
+        Repetir
+          Color(c)
+          Mover_cursor(16,12)
+          Escribir("COMPILADORES de Solo PROGRAMADORES & Co. PRESENTA")
+          Esperar(6)
+          c=c-1
+        Hasta c=7
+        Borrar_pantalla()
+        Esperar(200)
+ Volver
+
+;******************************************************************************
+;       Imprime el t°tulo del juego, para la pantalla del men£ de opciones
+;******************************************************************************
+
+.Titulo
+
+        Color(TabCol[iTabCol])
+        Mover_cursor(19,4)
+        Escribir("€€€€€ €€€€€ €     €   € €€€€€ €€€€€ €€€€€")
+        Color(TabCol[iTabCol+1])
+        Mover_cursor(19,5)
+        Escribir("€     €   € €     €   € € € € € € € €    ")
+        Color(TabCol[iTabCol+2])
+        Mover_cursor(19,6)
+        Escribir("€     €   € €     €   € € € € € € € €€€€€")
+        Color(TabCol[iTabCol+3])
+        Mover_cursor(19,7)
+        Escribir("€     €   € €     €   € €   € €   €     €")
+        Color(TabCol[iTabCol+4])
+        Mover_cursor(19,8)
+        Escribir("€€€€€ €€€€€ €€€€€ €€€€€ €   € €   € €€€€€")
+ Volver
+
+;******************************************************************************
+;       Espera a que se pulse una tecla, devuelve esta en <tecla>
+;******************************************************************************
+
+.Pausa
+        leer_tecla(tecla) ;1ß Vacia el buffer de teclado
+        Repetir
+          leer_tecla(tecla)
+        Hasta tecla<>0
+ Volver
+
+;******************************************************************************
+;       Imprime el marcador superior
+;******************************************************************************
+
+.Marcador
+
+        Mover_cursor(0,0) Color(11)
+        c=0 mientras c<3
+          Si c<Vidas
+            Escribir("")
+            Color(15) Escribir("O")
+            Color(11) Escribir(" ")
+          Sino
+            Color(9) Escribir(" ")
+          Fin
+          c=c+1
+        fin
+
+        Color(79)
+        Mover_cursor(23,0) Escribir(" COLUMMS Una odisea en el espacio ")
+
+        Color(16) Mover_cursor(65,0) Escribir("               ")
+        Mover_cursor(65+Niv_Actual/13,0) Color(27) Escribir("")
+
+ Volver

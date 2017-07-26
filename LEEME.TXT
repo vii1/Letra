@@ -1,0 +1,22 @@
+        Compilador de Letra 1.0 por Daniel Navarro Medrano
+
+        Desarrollado en Solo Programadores, n§ 15 al n§ 24
+
+        Freeware - Libre distribuci¢n, prohibida su venta.
+
+        Informaci¢n contenida ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        LETRA.EXE       Compilador ejecutable
+        STARTUP.COM     C¢digo de cabecera (start up)
+
+        DOC\            Art¡culos en formato Word
+
+        LT\             Programas ejemplo en Letra
+        FUENTES\        Fuentes del compilador
+        INFO\           Informaci¢n referente a Letra
+        STARTUP.CPP\    Fuentes del start up en C
+        STARTUP.ASM\    Fuentes del start up en Ensamblador
+        ENTORNO\        Versi¢n anterior del compilador
+        UTIL\           Compresi¢n de ejecutables
+
+        LEEME.TXT       Este fichero :)

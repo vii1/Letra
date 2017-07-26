@@ -1,0 +1,137 @@
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        El lenguaje intermedio EML
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+Se describen a continuaci¢n las instrucciones b sicas del lenguaje intermedio
+EML usado para generar c¢digo en el compilador de Letra. Se describe el
+mnem¢nico de la instrucci¢n y tras ‚l (entre los signos < y >) el par metro
+requerido en caso de que lo tenga, despu‚s se describe t‚cnicamente su
+fucionamiento, teniendo en cuenta lo siguiente que los corchetes [ ] indican la
+referencia (dentro del vector mem[ ]) al dato que est  en la direcci¢n indicada
+entre de los corchetes. Tras esta descripci¢n t‚cnica, se ofrece una
+descripci¢n m s detallada del funcionamiento de la instrucci¢n.
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INSTRUCCIONES DE ACCESO A DATOS
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+LOC <constante>: apilar constante;
+Apila la constante pasada como par metro.
+
+LOE <direcci¢n>: apilar [direcci¢n];
+Apila la variable que est  en la direcci¢n indicada.
+
+LOF <direcci¢n>: desapilar a;  apilar [direcci¢n+2*a];
+El par metro pasado indica la posici¢n de inicio de una tabla, primero se
+desapila el ¡ndice y se multiplica por dos, y despu‚s se apila el dato que
+est  en la tabla en la posici¢n que indicaba el ¡ndice (el dato que est  en
+inicio_tabla+2*indice).
+
+STE <direcci¢n>: desapilar [direcci¢n];
+Desapila una variable, es decir, saca un valor de pila y lo guarda en la
+direcci¢n que se le indica.
+
+STF <direcci¢n>: desapilar a;  desapilar b;  [direcci¢n+b*2]=a;
+El par metro pasado indica la posici¢n de inicio de una tabla, primero se
+desapila un valor, entonces se desapila el ¡ndice y se multiplica por dos, y
+por £ltimo se guarda el valor en la tabla en la posici¢n indicada por el ¡ndice
+(se desapila un dato en inicio_tabla+2*indice).
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INSTRUCCIONES ARITMTICAS BINARIAS
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+MUL: desapilar a;  desapilar b;  apilar b*a;
+Desapila dos valores y despues apila el producto de ambos.
+
+DIV: desapilar a;  desapilar b;  apilar b/a;
+Desapila dos valores y apila el resultado de dividir el £ltimo por el primero.
+
+MOD: desapilar a;  desapilar b;  apilar b%a;
+Desapila dos valores y apila el resto de la divisi¢n anterior.
+
+SUM: desapilar a;  desapilar b;  apilar b+a;
+Desapila dos valores y apila su suma.
+
+RES: desapilar a;  desapilar b;  apilar b-a;
+Desapila dos valores y apila el segundo menos el primero.
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        OPERADORES UNARIOS
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+NEG: desapilar a;  apilar -a;
+Desapila un valor, lo cambia de signo y lo vuelve a apilar.
+
+NOT: desapilar a;  apilar not a;
+Desapila un valor, lo niega a nivel binario (pasa los unos a ceros y viceversa)
+y entonces lo vuelve a apilar.
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INSTRUCCIONES LàGICAS
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+AND: desapilar a;  desapilar b;  apilar b and a;
+Desapila dos valores y apila el resultado de la operaci¢n 'and' binaria (opera
+todos sus bits con la siguiente l¢gica: 0 and 0=0, 0 and 1=1, 1 and 0=1,
+1 and 1=0)
+
+OR: desapilar a;  desapilar b;  apilar b or a;
+Desapila dos valores y apila el resultado de la operaci¢n 'or' binaria
+(l¢gica: 0 and 0=0, 0 and 1=1, 1 and 0=1, 1 and 1=1)
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INSTRUCCIONES DE COMPARACIàN
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+DIS: desapilar a; desapilar b; si (b!=a) apilar CIERTO; sino apilar FALSO;
+Si los dos valores desapilados son distintos mete en la pila una constante que
+indique CIERTO, en caso contrario mete una que indique FALSO. En Letra una
+constante indica cierto cuando es impar (cuando su bit n§0 esta a 1) y cuando
+es par (su bit n§0 est  a 0) indica falso.
+
+IGU: desapilar a; desapilar b; si (b==a) apilar CIERTO; sino apilar FALSO;
+Si los dos valores desapilados son iguales mete en la pila una constante que
+indique CIERTO (cualquier n£mero impar), en caso contrario mete una que indique
+FALSO (cualquier n£mero par).
+
+MAY: desapilar a; desapilar b; si (b>a) apilar CIERTO; sino apilar FALSO;
+Desapila dos valores y si el £ltimo es mayor que el primero apila una constante
+que indique CIERTO, en caso contrario apila una constante que indique FALSO.
+
+MAI: desapilar a; desapilar b; si (b>=a) apilar CIERTO; sino apilar FALSO;
+Desapila dos valores y si el £ltimo es mayor o igual que el primero apila una
+constante que indique CIERTO, en caso contrario apila una constante que indique
+FALSO.
+
+MEN: desapilar a; desapilar b; si (b<a) apilar CIERTO; sino apilar FALSO;
+Desapila dos valores y si el £ltimo es menor que el primero apila una constante
+que indique CIERTO, en caso contrario apila una constante que indique FALSO.
+
+MEI: desapilar a; desapilar b; si (b<=a) apilar CIERTO; sino apilar FALSO;
+Desapila dos valores y si el £ltimo es menor o igual que el primero apila una
+constante que indique CIERTO, en caso contrario apila una constante que indique
+FALSO.
+
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INSTRUCCIONES DE CONTROL DE FLUJO
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+IR <direcci¢n>: ir direcci¢n;
+Es un salto incondicional (como un JMP o GOTO) a la direcci¢n indicada como
+par metro, la pr¢xima instrucci¢n que se ejecute ser  la que comience en
+mem[direcci¢n].
+
+IRF <direcci¢n>: desapilar a;  si (not a) ir direcci¢n;
+Desapila un valor y si resulta que este es FALSO (es un n£mero par), salta a la
+direcci¢n indicada.
+
+LLA <direcci¢n>: llamar direcci¢n;
+Llama (hace un CALL o GOSUB) a la funci¢n que est  en la direcci¢n indicada,
+es decir, apila la direcci¢n de retorno (la direcci¢n de la instrucci¢n
+siguiente a LLA) y entonces salta a la direcci¢n.
+
+RET: retorno;
+Saca de la pila una direcci¢n (apilada por un LLA) y hace un salto
+incondicional (como IR) a dicha direcci¢n.
+

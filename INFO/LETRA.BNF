@@ -1,0 +1,190 @@
+# Sint xis BNF de Letra ampliada y comentada, esta sint xis no es ning£n pro-
+# grama (aunque parezca uno) es solo una forma de estructurar nuestro lenguaje
+# de programaci¢n para poder crear un compilador para ‚l f cilmente.
+
+# Se define un programa como una sucesi¢n de cualquier n£mero de sentencias
+# (incluso cero) y a continuaci¢n de ellas la pieza p_eof (fin de fichero)
+
+<PROGRAMA> ::= { <SENTENCIA> } p_eof
+
+# Se define una sentencia como uno cualquiera de los siguientes elementos
+
+<SENTENCIA> ::=
+  <ETIQUETA> | <DECLARACION_DATOS> | <ASIGNACION> | <SENT_SI> |
+  <SENT_MIENTRAS> | <SENT_REPETIR> | <SENT_IR> | <SENT_HACER> |
+  <SENT_VOLVER> | <FUNCION_INTERNA>
+
+# Una etiqueta no ser  m s que una pieza de tipo etiqueta (estas las reconoc¡a
+# el analizador l‚xico, pues eran nombres que empezaban con un punto).
+
+<ETIQUETA> ::= p_etiqueta
+
+# Una sentencia "declaraci¢n de datos" se construye comenzando con la palabra
+# reservada DATOS y finaliza con FIN, entre estas dos puede aparecer cualquier
+# n£mero de declaraciones de datos, estas empiezan todas con un identificador
+# (el nombre de la variable) y a continuaci¢n, de manera opcional, puede apare-
+# cer una declaraci¢n de este dato para inicializarlo o bien para indicar que
+# se trata de una tabla de datos.
+
+<DECLARACION_DATOS> ::=
+  p_datos
+  { p_identificador [ <INICIALIZACION_DATO> | <INICIALIZACION_TABLA> ] }
+  p_fin
+
+# Una sentencia de asignaci¢n se define como una referencia a un dato (que
+# podra ser una simple variable o bien una tabla con su ¡ndice) seguida siempre
+# del signo igual (=) y una expresi¢n cualquiera.
+
+<ASIGNACION> ::= <DATO> p_igual <EXPRESION>
+
+# La sentencia si (m s conocida como if ... else ... endif) ser  la palabra
+# reservada SI y una expresi¢n, tras las cuales puede aparecer cualquier n£mero
+# de sentencias y entonces la palabra FIN (finalizando la sentencia) o bien la
+# palabra SINO, otra serie de sentencias y la palabra FIN.
+
+<SENT_SI> ::= p_si <EXPRESION> { <SENTENCIA> } [ p_sino { <SENTENCIA> } ] p_fin
+
+# La sentencia mientras (while), palabra reservada MIENTRAS, una expresi¢n,
+# cualquier n£mero de sentencias y FIN.
+
+<SENT_MIENTRAS> ::= p_mientras <EXPRESION> { <SENTENCIA> } p_fin
+
+# Sentencia repetir (do ... while, o bien repeat ... until), REPETIR seguido
+# de una serie de sentencias y entonces HASTA seguido de una expresion
+
+<SENT_REPETIR> ::= p_repetir { <SENTENCIA> } p_hasta <EXPRESION>
+
+# Sentencia ir (goto), la palabra reservada IF seguida de una etiqueta
+
+<SENT_IR> ::= p_ir p_etiqueta
+
+# Sentencia hacer (gosub), GOSUB seguido de una etiqueta
+
+<SENT_HACER> ::= p_hacer p_etiqueta
+
+# Sentencia volver (return), simplemente la palabra reservada VOLVER
+
+<SENT_VOLVER> ::= p_volver
+
+# La inicializaci¢n de un dato definido en la zona de datos se podr  hacer
+# poniendo un signo igual y despu‚s una constante.
+
+<INICIALIZACION_DATO> ::= p_igual <CONSTANTE>
+
+# Para inicializar una tabla de datos deberemos indicar entre corchetes su
+# longitud (con un entero) pudiendo despues, opcionalmente, indicar el conte-
+# nido de la tabla con un signo igual y varias constantes separadas por s¡m-
+# bolos dos puntos (:). Otra posible definici¢n admitida es definir una tabla
+# omitiendo su longitud entre los corchetes, pero en dicho caso ser  obligato-
+# ria la inicializaci¢n de la tabla (para poder calcular su longitud).
+
+<INICIALIZACION_TABLA> ::=
+  p_abrir_corchete
+    (p_entero p_cerrar_corchete
+    [ p_igual <CONSTANTE> { p_dos_puntos <CONSTANTE> } ] |
+    p_cerrar_corchete p_igual <CONSTANTE> { p_dos_puntos <CONSTANTE> } )
+
+# Una constante puede ser, las palabras reservadas CIERTO o FALSO (true, false)
+# un entero (opcionalmente precedido de un + o un -) o bien un literal (un
+# texto entre comillas).
+
+<CONSTANTE> ::= p_cierto | p_falso | [ p_mas | p_menos ] p_entero | p_literal
+
+# Una referencia a un dato es simplemente el nombre de ese dato, y si es una
+# tabla debemos indicar entre corchetes a que posici¢n de ella nos referimos
+# utilizando una expresi¢n
+
+<DATO> ::= p_identificador [ p_abrir_corchete <EXPRESION> p_cerrar_corchete ]
+
+# Una expresi¢n se define como un c¢mputo (una expresi¢n sin operadores
+# l¢gicos), tras la cual, mientras venga un operador l¢gico, pueden seguirle
+# mas c¢mputos.
+
+<EXPRESION> ::= <COMPUTO> { <OP_LOGICO> <COMPUTO> }
+
+# Un computo se define igualmente como un valor (expresi¢n sin operadores
+# l¢gicos ni de comparaci¢n) o varios separados por operadores de comparaci¢n.
+
+<COMPUTO> ::= <VALOR> { <OP_COMPARACION> <VALOR> }
+
+# Un valor ser  un t‚rmino (expresi¢n que solo puede utilizar los operadores
+# binarios de mayor prioridad: multiplicar, dividir o m¢dulo) o varios
+# separados por operadores del nivel aditivo (suma y resta)
+
+<VALOR> ::= <TERMINO> { <OP_ADITIVO> <TERMINO> }
+
+# Un t‚rmino ser  un factor (el elemento b sico de una expresi¢n) o varios
+# separados por operadores del nivel multiplicativo).
+
+<TERMINO> ::= <FACTOR> { <OP_MULTIPLICATIVO> <FACTOR> }
+
+# Un factor, es el elemento b sico de una expresi¢n como son: CIERTO, FALSO, un
+# n£mero entero, un literal, una referencia a un dato (o tabla) o bien otra
+# expresi¢n completa entre par‚ntesis. A estos elementos les puede preceder un
+# operador unario (o varios), como los signos positivo y negativo o el operador
+# NO de negaci¢n (el not l¢gico).
+
+<FACTOR> ::= 
+  <OP_UNARIO> <FACTOR> | p_abrir_parentesis <EXPRESION> p_cerrar_parentesis |
+  <DATO> | p_cierto | p_falso | p_entero | p_literal
+
+# Operadores de nivel logico Y (and) y O (or), son los operadores de menor
+# prioridad en el c lculo.
+
+<OP_LOGICO> ::= p_y | p_o
+
+# A estos les siguen los operadores de comparaci¢n siguientes.
+
+<OP_COMPARACION> ::=
+  p_mayor | p_mayor_igual | p_menor | p_menor_igual | p_igual | p_distinto
+
+# Los operadores de nivel aditivo son solo la suma y la resta.
+
+<OP_ADITIVO> ::= p_mas | p_menos
+
+# Los de nivel multiplicativo, el signo de multiplicar, de dividir y el de
+# m¢dulo (o resto de una divisi¢n entera) son los operadores binarios de mayor
+# prioridad (binario quiere decir que opera con los elementos que tiene a su
+# izquierda y a su derecha, obteniendo un resultado de ambos).
+
+<OP_MULTIPLICATIVO> ::= p_multiplicar | p_dividir | p_modulo
+
+# Los operadores unarios afectan directamente (y £nicamente) a el factor que
+# tienen a continuaci¢n, por ello son de mayor prioridad que los binarios.
+
+<OP_UNARIO> ::= p_mas | p_menos | p_no
+
+# Por £ltimo definiremos las funciones internas del lenguaje, que act£an como
+# si se tratara de otras sentencias, y son las siguientes.
+
+<FUNCION_INTERNA> ::=
+  <BORRAR_PANTALLA> | <ESCRIBIR> | <LEER_TECLA> | <MOVER_CURSOR> |
+  <COLOR> | <ALEATORIO> | <ESPERAR> | <LEER_CARACTER> | <PONER_CARACTER>
+
+# Todas las funciones se definen como una palabra reservada determinada, que
+# es el nombre de la funci¢n, y despu‚s entre par‚ntesis los par metros que
+# se requieran. Las funciones que requieren como par metro un <DATO> (referen-
+# cia a un dato o posici¢n de tabla) es por que van a devolver un valor en
+# dicho dato. Estas sentencias tienen la siguiente sintaxis:
+
+<BORRAR_PANTALLA> ::= p_borrar_pantalla p_abrir_parentesis p_cerrar_parentesis
+
+<ESCRIBIR> ::= p_escribir p_abrir_parentesis p_literal p_cerrar_parentesis
+
+<LEER_TECLA> ::= p_leer_tecla p_abrir_parentesis <DATO> p_cerrar_parentesis
+
+<MOVER_CURSOR> ::=
+  p_mover_cursor p_abrir_parentesis <EXPRESION> p_coma
+  <EXPRESION> p_cerrar_parentesis
+
+<COLOR> ::= p_color p_abrir_parentesis <EXPRESION> p_cerrar_parentesis
+
+<ALEATORIO> ::= p_aleatorio p_abrir_parentesis <DATO> p_cerrar_parentesis
+
+<ESPERAR> ::= p_esperar p_abrir_parentesis <EXPRESION> p_cerrar_parentesis
+
+<LEER_CARACTER> ::=
+  p_leer_car cter p_abrir_parentesis <DATO> p_cerrar_parentesis
+
+<PONER_CARACTER> ::=
+  p_poner_car cter p_abrir_parentesis <EXPRESION> p_cerrar_parentesis

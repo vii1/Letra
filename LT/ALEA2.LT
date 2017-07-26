@@ -1,0 +1,11 @@
+Datos a b c d e fin
+
+Repetir e=0
+  si a y b y c d=d+c fin
+  Repetir e=e+1
+    Aleatorio(a) a=a%80
+    Aleatorio(b) b=b%25
+    Aleatorio(c) c=c%128
+    Mover_cursor(a,b) Color((c o d)%128) Poner_caracter("±")
+  Hasta e=25000
+Hasta falso

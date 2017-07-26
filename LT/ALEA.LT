@@ -1,0 +1,28 @@
+Datos i fin
+
+Repetir i=0
+Repetir i=i+1
+  Aleatorio(numero)
+  Color(numero)
+  Hacer.Escribir_entero
+  Color(0) Escribir(" ")
+Hasta i=333
+Repetir leer_tecla(i) Hasta i<>0
+Mover_cursor(0,0)
+Hasta Falso
+
+.Escribir_entero
+
+Datos ent[5] ient=0 numero fin
+
+Si numero<0 Escribir("-") numero=-numero fin
+Repetir
+  ent[ient]=numero%10+"0"
+  numero=numero/10
+  ient=ient+1
+Hasta numero=0
+Repetir
+  ient=ient-1
+  Poner_caracter(ent[ient])
+Hasta ient=0
+Volver
